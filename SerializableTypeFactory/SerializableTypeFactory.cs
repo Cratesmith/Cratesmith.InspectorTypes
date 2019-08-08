@@ -265,7 +265,7 @@ namespace Cratesmith.InspectorTypes
     {
         protected abstract TObjectType CreateInstance(TKeyType key, TObjectType prefab, TOwner owner);
 
-        public TObjectType Create(TKeyType key, TOwner owner)
+        public TObjectType Create<T>(T key, TOwner owner) where T:TKeyType
         {
             TObjectType prefab = GetPrefab(key);
             return prefab!=null 
@@ -280,7 +280,7 @@ namespace Cratesmith.InspectorTypes
     {
         protected abstract TObjectType CreateInstance(TKeyType key, TObjectType prefab);
 
-        public TObjectType Create(TKeyType key)
+        public TObjectType Create<T>(T key) where T:TKeyType
         {
             TObjectType prefab = GetPrefab(key);
             return prefab!=null 
