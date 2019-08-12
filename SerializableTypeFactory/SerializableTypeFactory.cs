@@ -67,6 +67,18 @@ namespace Cratesmith.InspectorTypes
         public abstract System.Type ObjectType { get; }
         public abstract bool CheckPrefabCompatibility(System.Type keyType, Object prefab);
 
+        protected static System.Type LookupType(string name)
+        { 
+            System.Type type = null;
+            var assemblies = System.AppDomain.CurrentDomain.GetAssemblies();
+            for (int i = 0; i < assemblies.Length; i++)
+            {
+                type = assemblies[i].GetType(name);
+                if (type != null) break;
+            }
+            return type;
+        }
+
         #region drawer
 #if UNITY_EDITOR
         [CustomPropertyDrawer(typeof(SerializableTypeFactoryBase), true)]
@@ -108,7 +120,7 @@ namespace Cratesmith.InspectorTypes
                     foreach (var keyTypeName in keyTypes)
                     {
                         Object prefab = null;
-                        var keyType = factory.KeyType.Assembly.GetType(keyTypeName);
+                        var keyType = LookupType(keyTypeName);
                         yHeight += (table.TryGetValue(keyTypeName, out prefab) && !factory.CheckPrefabCompatibility(keyType, prefab))
                             ? ERROR_LINE_HEIGHT
                             : LINE_HEIGHT;                   
@@ -164,7 +176,8 @@ namespace Cratesmith.InspectorTypes
                     var rHelpBox     = new Rect(position.position + new Vector2(UnityEditor.EditorGUIUtility.labelWidth, currentY+LINE_HEIGHT), new Vector2(position.width-UnityEditor.EditorGUIUtility.labelWidth, ERROR_LINE_HEIGHT-LINE_HEIGHT));
             
                     var keyName = keyTypes[i];
-                    var keyType = factoryKeyType.Assembly.GetType(keyTypes[i]);
+                    var keyType = LookupType(keyTypes[i]);
+                    if(keyType==null) continue;
 
                     if (keyName == factoryKeyType.FullName)
                     {
@@ -177,6 +190,7 @@ namespace Cratesmith.InspectorTypes
                         {
                             keyName = keyName.Substring(lastPoint+1);
                         }
+
                         if (!keyType.IsInterface
                             && !factoryKeyType.IsInterface
                             && keyName.StartsWith(factoryKeyType.Name) 
@@ -356,7 +370,7 @@ namespace Cratesmith.InspectorTypes
             table.Clear();
             for (int i = 0; i < Mathf.Min(_typeIds.Count, _prefabs.Count); i++)
             {
-                var type = GetType().Assembly.GetType(_typeIds[i]);
+                var type = LookupType(_typeIds[i]);
                 if (type != null)
                 {
                     table[type] = _prefabs[i];
