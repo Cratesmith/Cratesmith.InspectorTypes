@@ -2,7 +2,7 @@
 	"name": "com.cratesmith.inspectortypes",
 	"displayName": "Cratesmith.InspectorTypes",
 	"description": "Common use inspector types with drawers for Unity3d",
-	"version": "0.0.2",
+	"version": "0.0.3",
 	"unity": "2018.3",
 	"license": "MIT",
 	"repository": {
